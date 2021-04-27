@@ -1,0 +1,159 @@
+body {
+  background-color: #101101;
+  margin: 0;
+  font-family: pixelFont;
+}
+
+body h1 {
+  margin: 0;
+  padding: 0;
+}
+
+body .interface {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0px;
+  left: 0px;
+  color: white;
+}
+
+body .interface .valueDisplayerParent {
+  display: inline-block;
+  width: 100%;
+  max-height: 100px;
+  background-color: #808808AA;
+  padding: 0;
+}
+
+body .interface .valueDisplayerParent .valueDisplayer {
+  padding: 10px 10px 10px 10px;
+}
+
+body .interface .valueDisplayerParent .valueDisplayer .CurrentMone {
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -ms-flex-line-pack: center;
+      align-content: center;
+}
+
+body .interface .shop {
+  display: inline-block;
+  background-color: #808808AA;
+  width: -webkit-min-content;
+  width: -moz-min-content;
+  width: min-content;
+  text-align: center;
+}
+
+body .interface .shop .title {
+  margin: 1rem;
+}
+
+body .interface .shop .button {
+  margin: 5px;
+  border: white 2px solid;
+  background-color: #AAA0;
+  -webkit-transition: background-color 100ms;
+  transition: background-color 100ms;
+  width: -webkit-max-content;
+  width: -moz-max-content;
+  width: max-content;
+  cursor: pointer;
+}
+
+body .interface .shop .button:hover {
+  background-color: #AAAA;
+}
+
+body .interface .shop .button .title {
+  font-weight: bold;
+}
+
+body .mainClicker {
+  position: absolute;
+  width: 20vw;
+  height: 20vw;
+  background-image: url("../assets/cockie.png");
+  background-size: cover;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%) rotate(0deg);
+          transform: translate(-50%, -50%) rotate(0deg);
+  -webkit-transform-origin: 500px, 500px;
+          transform-origin: 500px, 500px;
+}
+
+body .mainClicker.shake {
+  -webkit-animation: shakeAni 500ms ease-in-out 1;
+          animation: shakeAni 500ms ease-in-out 1;
+}
+
+@font-face {
+  font-family: pixelFont;
+  src: url("../assets/pixelFont.ttf");
+}
+
+@-webkit-keyframes shakeAni {
+  0% {
+    -webkit-transform: translate(-50%, -50%) rotate(0deg);
+            transform: translate(-50%, -50%) rotate(0deg);
+  }
+  16% {
+    -webkit-transform: translate(-50%, -50%) rotate(-10deg);
+            transform: translate(-50%, -50%) rotate(-10deg);
+  }
+  32% {
+    -webkit-transform: translate(-50%, -50%) rotate(0deg);
+            transform: translate(-50%, -50%) rotate(0deg);
+  }
+  48% {
+    -webkit-transform: translate(-50%, -50%) rotate(10deg);
+            transform: translate(-50%, -50%) rotate(10deg);
+  }
+  64% {
+    -webkit-transform: translate(-50%, -50%) rotate(0deg);
+            transform: translate(-50%, -50%) rotate(0deg);
+  }
+  80% {
+    -webkit-transform: translate(-50%, -50%) rotate(-10deg);
+            transform: translate(-50%, -50%) rotate(-10deg);
+  }
+  100% {
+    -webkit-transform: translate(-50%, -50%) rotate(0deg);
+            transform: translate(-50%, -50%) rotate(0deg);
+  }
+}
+
+@keyframes shakeAni {
+  0% {
+    -webkit-transform: translate(-50%, -50%) rotate(0deg);
+            transform: translate(-50%, -50%) rotate(0deg);
+  }
+  16% {
+    -webkit-transform: translate(-50%, -50%) rotate(-10deg);
+            transform: translate(-50%, -50%) rotate(-10deg);
+  }
+  32% {
+    -webkit-transform: translate(-50%, -50%) rotate(0deg);
+            transform: translate(-50%, -50%) rotate(0deg);
+  }
+  48% {
+    -webkit-transform: translate(-50%, -50%) rotate(10deg);
+            transform: translate(-50%, -50%) rotate(10deg);
+  }
+  64% {
+    -webkit-transform: translate(-50%, -50%) rotate(0deg);
+            transform: translate(-50%, -50%) rotate(0deg);
+  }
+  80% {
+    -webkit-transform: translate(-50%, -50%) rotate(-10deg);
+            transform: translate(-50%, -50%) rotate(-10deg);
+  }
+  100% {
+    -webkit-transform: translate(-50%, -50%) rotate(0deg);
+            transform: translate(-50%, -50%) rotate(0deg);
+  }
+}
+/*# sourceMappingURL=style.css.map */
