@@ -5,7 +5,8 @@ function setup() {
     window.game = new Game(
         document.getElementById("mainClicker"),
         document.getElementById("CurrentMoneDisplay"),
-        document.getElementById("shopTitle")
+        document.getElementById("shopButtonContainer"),
+        document.getElementById("CurrentMonePerSecondDisplay")
     );
 }
 

@@ -17,10 +17,15 @@
                     <h1>Mone: </h1>
                     <h1 id="CurrentMoneDisplay"></h1>
                 </div>
+                <div class="CurrentMonePerSecond">
+                    <h1>| MpS:</h1>
+                    <h1 id="CurrentMonePerSecondDisplay"></h1>
+                </div>
             </div>
         </div>
         <div class="shop">
             <h3 id="shopTitle" class="title">|Shop|</h3>
+            <div id="shopButtonContainer"></div>
         </div>
     </div>
 

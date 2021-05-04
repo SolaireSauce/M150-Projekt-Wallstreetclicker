@@ -9,6 +9,47 @@ body h1 {
   padding: 0;
 }
 
+body .hidden {
+  display: none;
+}
+
+body .button {
+  margin: 6px 0 6px 0;
+  padding: 3px;
+  outline: solid white 3px;
+  outline-offset: -3px;
+  background-color: #AAA0;
+  -webkit-transition: background-color 100ms;
+  transition: background-color 100ms;
+  width: 100%;
+  cursor: pointer;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+}
+
+body .button:hover {
+  background-color: #AAAA;
+}
+
+body .button .name {
+  font-weight: bold;
+  margin: 10px;
+}
+
+body .button .value {
+  margin: 2px;
+}
+
+body .button.buttonError {
+  background-color: #A00A;
+}
+
+body .button.buttonSuccess {
+  background-color: #0A0A;
+}
+
 body .interface {
   position: absolute;
   width: 100%;
@@ -19,7 +60,6 @@ body .interface {
 }
 
 body .interface .valueDisplayerParent {
-  display: inline-block;
   width: 100%;
   max-height: 100px;
   background-color: #808808AA;
@@ -27,6 +67,12 @@ body .interface .valueDisplayerParent {
 }
 
 body .interface .valueDisplayerParent .valueDisplayer {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 1fr 1fr 1fr;
+      grid-template-columns: 1fr 1fr 1fr;
+  -ms-grid-rows: 1fr;
+      grid-template-rows: 1fr;
   padding: 10px 10px 10px 10px;
 }
 
@@ -34,41 +80,29 @@ body .interface .valueDisplayerParent .valueDisplayer .CurrentMone {
   display: -webkit-inline-box;
   display: -ms-inline-flexbox;
   display: inline-flex;
-  -ms-flex-line-pack: center;
-      align-content: center;
+  -ms-grid-column: 1;
+  grid-column: 1 / 1;
+}
+
+body .interface .valueDisplayerParent .valueDisplayer .CurrentMonePerSecond {
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -ms-grid-column: 2;
+  grid-column: 2 / 2;
 }
 
 body .interface .shop {
   display: inline-block;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   background-color: #808808AA;
-  width: -webkit-min-content;
-  width: -moz-min-content;
-  width: min-content;
   text-align: center;
+  padding: 0 12px 0 6px;
 }
 
 body .interface .shop .title {
   margin: 1rem;
-}
-
-body .interface .shop .button {
-  margin: 5px;
-  border: white 2px solid;
-  background-color: #AAA0;
-  -webkit-transition: background-color 100ms;
-  transition: background-color 100ms;
-  width: -webkit-max-content;
-  width: -moz-max-content;
-  width: max-content;
-  cursor: pointer;
-}
-
-body .interface .shop .button:hover {
-  background-color: #AAAA;
-}
-
-body .interface .shop .button .title {
-  font-weight: bold;
 }
 
 body .mainClicker {
