@@ -4,7 +4,7 @@ export default class Game {
     // Some important values
     mone = 0;
     monePerS = 0;
-    monePerClick = 1;
+    monePerClick = 1000;
     // Maybe will be needed
     recalculateUpgrades = false;
     // Upgrades import
@@ -15,21 +15,26 @@ export default class Game {
     mainClicker;
     moneDisplay;
     shopButtonDisplay;
+    researchButtonDisplay;
     loadingScreen;
 
     
-    constructor (mainClicker, moneDisplay, shopButtonDisplay, mpSDisplay, loadingScreen) {
+    constructor (mainClicker, moneDisplay, mpSDisplay, shopButtonDisplay, researchButtonDisplay) {
         // Constructor doing constructor things
         this.moneDisplay = moneDisplay;
         this.shopButtonDisplay = shopButtonDisplay;
         this.mainClicker = mainClicker;
         this.mpSDisplay = mpSDisplay;
-        this.loadingScreen = loadingScreen;
+        this.researchButtonDisplay = researchButtonDisplay;
         
         // Adds upgrade buttons
         var i = 0;
         for(var u of this.upgrades) {
-            u = eval('this.' + u.upgradeFunc + `({init: true, id: ${i}, u: ${JSON.stringify(u)}})`);
+            if (u.unlocked) {
+                eval('this.' + u.upgradeFunc + `({create: true, id: ${i}, u: ${JSON.stringify(u)}})`);
+            } else {
+                this.unlockUpgrade({create: true, id: i, u: u});
+            }
             i++;
         }
 
@@ -44,7 +49,6 @@ export default class Game {
     // Function returns formatet number
     formatNumber(number){     
         number = parseFloat(number);
-        console.log(number)
         if (number > 1e5) {
             return number.toExponential(1).replace("+","");
         } else {
@@ -69,12 +73,12 @@ export default class Game {
     // Upgrade function for most upgrades
     defaultUpgrade(args) {
         // Creates Button
-        if (args.init) {
+        if (args.create) {
             this.shopButtonDisplay.insertAdjacentHTML('beforeEnd', `
-            <div id="buyButton${args.id}" class="button ${args.u.unlocked ? '' : 'hidden'}" onclick="game.${args.u.upgradeFunc + '(' + this.argumentsAsString(args.u.upgradeFuncArgs, args.id) + ')'}">
+            <div id="buyButton${args.id}" class="button" onclick="game.${args.u.upgradeFunc + '(' + this.argumentsAsString(args.u.upgradeFuncArgs, args.id) + ')'}">
                 <div class="name">${args.u.name}</div>
                 <div class="value">Owned: ${args.u.amount}</div>
-                <div class="value">${this.formatNumber(args.u.monePerS)}/s</div>
+                <div class="value">+${this.formatNumber(args.u.monePerS)}/s</div>
                 <div class="value">${Math.ceil(this.formatNumber(args.u.cost))} mone</div>
             </div>`);
             this.upgrades[args.id].htmlElement = document.getElementById(`buyButton${args.id}`);
@@ -84,18 +88,18 @@ export default class Game {
         // Upgrades
         var up = this.upgrades[args.id];
         if (up.unlocked) {
-            if (this.mone - up.cost >= 0) {
+            if (this.mone >= up.cost) {
                 this.mone -= up.cost;
                 up.amount++;
-                up.cost = up.cost * 1.2;
-                up.htmlElement.getElementsByClassName('value')[2].innerText = this.formatNumber(Math.ceil(up.cost)) + ' mone';
+                up.cost = up.cost * up.costIncrease;
+                up.htmlElement.getElementsByClassName('value')[2].innerText = this.formatNumber(up.cost.toFixed(1)) + ' mone';
                 up.htmlElement.getElementsByClassName('value')[0].innerText = 'Owned: ' + this.formatNumber(up.amount);
                 this.calcUpgradeMonePerS();
                 this.updateDisplay();
-                /* this.buttonStatusDisplay(up.htmlElement, 'success') */
+                this.buttonStatusDisplay(up.htmlElement, 'success') 
             }
             else {
-                /* this.buttonStatusDisplay(up.htmlElement, 'error')      */           
+                this.buttonStatusDisplay(up.htmlElement, 'error')          
             }
         } else {
             console.log(`Upgrade with id ${args.id} not unlocked`)
@@ -103,11 +107,11 @@ export default class Game {
     }
 
     mainClickerUpgrade(args){
-        if (args.init) {
+        if (args.create) {
             this.shopButtonDisplay.insertAdjacentHTML('beforeEnd', `
-            <div id="buyButton${args.id}" class="button ${args.u.unlocked ? '' : 'hidden'}" onclick="game.${args.u.upgradeFunc + '(' + this.argumentsAsString(args.u.upgradeFuncArgs, args.id) + ')'}">
+            <div id="buyButton${args.id}" class="button" onclick="game.${args.u.upgradeFunc + '(' + this.argumentsAsString(args.u.upgradeFuncArgs, args.id) + ')'}">
                 <div class="name">${args.u.name}</div>
-                <div class="value">Owned: ${args.u.amount}</div>
+                <div class="value">x1</div>
                 <div class="value">Click x${this.formatNumber(args.u.mulpli)}</div>
                 <div class="value">${Math.ceil(this.formatNumber(args.u.cost))} mone</div>
             </div>`);
@@ -117,23 +121,51 @@ export default class Game {
 
         var up = this.upgrades[args.id];
         if (up.unlocked) {
-            if (this.mone - up.cost >= 0) {
+            if (this.mone >= up.cost) {
                 this.mone -= up.cost;
                 up.amount++;
-                up.cost = up.cost * 1.2;
-                up.htmlElement.getElementsByClassName('value')[2].innerText = this.formatNumber(Math.ceil(up.cost)) + ' mone';
-                up.htmlElement.getElementsByClassName('value')[0].innerText = 'Owned: ' + this.formatNumber(up.amount);
+                up.cost = up.cost * up.costIncrease;
+                up.htmlElement.getElementsByClassName('value')[2].innerText = this.formatNumber(up.cost.toFixed(1)) + ' mone';
+                up.htmlElement.getElementsByClassName('value')[0].innerText = `${Math.pow(2, up.amount)}x`;
                 this.monePerClick = this.monePerClick * up.mulpli;
                 this.updateDisplay();
-                /* this.buttonStatusDisplay(up.htmlElement, 'success') */
+                this.buttonStatusDisplay(up.htmlElement, 'success') 
             }
             else {
-                /* this.buttonStatusDisplay(up.htmlElement, 'error')      */           
+                this.buttonStatusDisplay(up.htmlElement, 'error')           
             }
         } else {
             console.log(`Upgrade with id ${args.id} not unlocked`)
         }
     }
+
+
+    unlockUpgrade(args){
+        if (args.create) {
+            this.researchButtonDisplay.insertAdjacentHTML('beforeEnd', `
+            <div class="button" onclick="game.unlockUpgrade({id: ${args.id}, thrower: this})">
+                <div class="value">UNLOCK</div>            
+                <div class="name">${args.u.name}</div>
+                <div class="value">${args.u.unlockCost} mone</div>    
+            </div>`);
+            return;
+        }
+
+        var u = this.upgrades[args.id];
+        if (this.mone >= u.unlockCost) {
+            this.mone -= u.unlockCost
+            u.unlocked = true;
+            eval('this.' + u.upgradeFunc + `({create: true, id: ${args.id}, u: ${JSON.stringify(u)}})`);
+            this.updateDisplay();
+            args.thrower.remove();
+            if (this.researchButtonDisplay.getElementsByClassName('button').length == 0) {
+                this.researchButtonDisplay.parentElement.remove();
+            }
+        } else {
+            this.buttonStatusDisplay(args.thrower, 'error')
+        }
+    }
+
 
     // Not yet implemented
     async loadSave(save) {
