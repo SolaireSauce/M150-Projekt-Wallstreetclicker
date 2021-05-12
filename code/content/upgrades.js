@@ -17,7 +17,7 @@ export default [
         cost: 1,
         costIncrease: 1.2,
         upgradeFunc: "defaultUpgrade",
-        upgradeFuncArgs: {id: "id",  val: 1}
+        upgradeFuncArgs: {id: "id"}
     },
     {
         name: "BetterAutoclicker",
@@ -28,7 +28,7 @@ export default [
         costIncrease: 1.2,
         unlockCost: 500,
         upgradeFunc: "defaultUpgrade",
-        upgradeFuncArgs: {id: "69"}
+        upgradeFuncArgs: {id: "id"}
     },
     {
         name: "EvenBetterAutoclicker",

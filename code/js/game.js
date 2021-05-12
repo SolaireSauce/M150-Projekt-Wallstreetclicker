@@ -4,7 +4,7 @@ export default class Game {
     // Some important values
     mone = 0;
     monePerS = 0;
-    monePerClick = 1000;
+    monePerClick = 1;
     // Maybe will be needed
     recalculateUpgrades = false;
     // Upgrades import
@@ -79,7 +79,7 @@ export default class Game {
                 <div class="name">${args.u.name}</div>
                 <div class="value">Owned: ${args.u.amount}</div>
                 <div class="value">+${this.formatNumber(args.u.monePerS)}/s</div>
-                <div class="value">${Math.ceil(this.formatNumber(args.u.cost))} mone</div>
+                <div class="value">${this.formatNumber(args.u.cost.toFixed(1))} mone</div>
             </div>`);
             this.upgrades[args.id].htmlElement = document.getElementById(`buyButton${args.id}`);
             return;
@@ -111,7 +111,7 @@ export default class Game {
             this.shopButtonDisplay.insertAdjacentHTML('beforeEnd', `
             <div id="buyButton${args.id}" class="button" onclick="game.${args.u.upgradeFunc + '(' + this.argumentsAsString(args.u.upgradeFuncArgs, args.id) + ')'}">
                 <div class="name">${args.u.name}</div>
-                <div class="value">x1</div>
+                <div class="value">${args.u.amount == 0? 1 : Math.pow(2, args.u.amount)}x</div>
                 <div class="value">Click x${this.formatNumber(args.u.mulpli)}</div>
                 <div class="value">${Math.ceil(this.formatNumber(args.u.cost))} mone</div>
             </div>`);
@@ -159,7 +159,7 @@ export default class Game {
             this.updateDisplay();
             args.thrower.remove();
             if (this.researchButtonDisplay.getElementsByClassName('button').length == 0) {
-                this.researchButtonDisplay.parentElement.remove();
+                this.researchButtonDisplay.parentElement.classList.add('hidden');
             }
         } else {
             this.buttonStatusDisplay(args.thrower, 'error')
@@ -167,13 +167,47 @@ export default class Game {
     }
 
 
-    // Not yet implemented
-    async loadSave(save) {
-        if (typeof save == 'string') {
-            return true;
-        } else {
-            return false;
+    saveGame() {
+        var sg = {version: 0 ,mone: this.mone, monePerClick: this.monePerClick, upgrades: this.upgrades}
+        localStorage.setItem('savedGame', JSON.stringify(sg))
+    }
+
+
+    loadGame() {
+        var sg = JSON.parse(localStorage.getItem('savedGame'))
+        clearInterval(this.ticker)
+        if (sg.version == 0) {
+            this.mone = sg.mone
+            this.monePerClick = sg.monePerClick
+            this.upgrades = sg.upgrades            
         }
+
+        this.calcUpgradeMonePerS()
+
+        this.shopButtonDisplay.innerText = ''
+        this.researchButtonDisplay.innerText = ''
+
+        var i = 0;
+        for(var u of this.upgrades) {
+            if (u.unlocked) {
+                eval('this.' + u.upgradeFunc + `({create: true, id: ${i}, u: ${JSON.stringify(u)}})`);
+            } else {
+                this.unlockUpgrade({create: true, id: i, u: u});
+            }
+            i++;
+        }
+
+        if (!this.researchButtonDisplay.getElementsByClassName('button').length == 0) {
+            this.researchButtonDisplay.parentElement.classList.remove('hidden');
+        } else {
+            if (!game.researchButtonDisplay.parentElement.classList.contains('hidden')) {
+                this.researchButtonDisplay.parentElement.classList.add('hidden');                
+            }
+        }
+
+        this.ticker = setInterval(function() { this.doTick() }.bind(this), 1000);
+
+        this.updateDisplay()
     }
 
     buttonStatusDisplay(button, status){

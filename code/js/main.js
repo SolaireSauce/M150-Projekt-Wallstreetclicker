@@ -1,6 +1,5 @@
 import Game from './game.js';
 
-
 function setup() {
     window.game = new Game(
         document.getElementById("mainClicker"),
