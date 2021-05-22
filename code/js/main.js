@@ -7,6 +7,7 @@ function setup() {
         document.getElementById("CurrentMonePerSecondDisplay"),
         document.getElementById("shopButtonContainer"),
         document.getElementById("unlockButtonContainer"),
+        document.getElementById("achivementsContainer")
     );
 }
 

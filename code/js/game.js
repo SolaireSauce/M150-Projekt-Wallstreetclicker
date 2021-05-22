@@ -1,5 +1,5 @@
-import upgradesJson from './../content/upgrades.js';
-
+import upgradesImport from './../content/upgrades.js';
+import achivementsImport from './../content/achivements.js';
 export default class Game {
     // Some important values
     mone = 0;
@@ -7,8 +7,9 @@ export default class Game {
     monePerClick = 1;
     // Maybe will be needed
     recalculateUpgrades = false;
-    // Upgrades import
-    upgrades = upgradesJson;
+    // Content import
+    upgrades = upgradesImport;
+    achivements = achivementsImport;
     // Main Timer
     ticker;
     // HTML Elements
@@ -16,16 +17,17 @@ export default class Game {
     moneDisplay;
     shopButtonDisplay;
     researchButtonDisplay;
-    loadingScreen;
+    achivementsDisplay;
 
     
-    constructor (mainClicker, moneDisplay, mpSDisplay, shopButtonDisplay, researchButtonDisplay) {
+    constructor (mainClicker, moneDisplay, mpSDisplay, shopButtonDisplay, researchButtonDisplay, achivementsDisplay) {
         // Constructor doing constructor things
         this.moneDisplay = moneDisplay;
         this.shopButtonDisplay = shopButtonDisplay;
         this.mainClicker = mainClicker;
         this.mpSDisplay = mpSDisplay;
         this.researchButtonDisplay = researchButtonDisplay;
+        this.achivementsDisplay = achivementsDisplay;
         
         // Adds upgrade buttons
         var i = 0;
@@ -35,6 +37,21 @@ export default class Game {
             } else {
                 this.unlockUpgrade({create: true, id: i, u: u});
             }
+            i++;
+        }
+        
+        i = 0;
+
+        for(var a of this.achivements) {
+            a.isUnlocked = false;
+            this.achivementsDisplay.insertAdjacentHTML('beforeEnd', `
+            <div id="achivement${i}" class="achivement locked">
+                <div class="name">${a.name}</div>
+                <div class="desc">${a.desc}</div>
+                <div class="isLocked">Locked</div>
+            </div>
+            `)
+            a.element = document.getElementById("achivement" + i)
             i++;
         }
 
@@ -168,7 +185,7 @@ export default class Game {
 
 
     saveGame() {
-        var sg = {version: 0 ,mone: this.mone, monePerClick: this.monePerClick, upgrades: this.upgrades}
+        var sg = {version: 0 ,mone: this.mone, monePerClick: this.monePerClick, upgrades: this.upgrades, achivements: this.achivements}
         localStorage.setItem('savedGame', JSON.stringify(sg))
     }
 
@@ -179,13 +196,15 @@ export default class Game {
         if (sg.version == 0) {
             this.mone = sg.mone
             this.monePerClick = sg.monePerClick
-            this.upgrades = sg.upgrades            
+            this.upgrades = sg.upgrades
+            this.achivements = sg.achivements
         }
 
         this.calcUpgradeMonePerS()
 
         this.shopButtonDisplay.innerText = ''
         this.researchButtonDisplay.innerText = ''
+        this.achivementsDisplay.innerText = ''
 
         var i = 0;
         for(var u of this.upgrades) {
@@ -203,6 +222,20 @@ export default class Game {
             if (!game.researchButtonDisplay.parentElement.classList.contains('hidden')) {
                 this.researchButtonDisplay.parentElement.classList.add('hidden');                
             }
+        }
+
+        var i = 0;
+        
+        for(var a of this.achivements) {
+            this.achivementsDisplay.insertAdjacentHTML('beforeEnd', `
+            <div id="achivement${i}" class="achivement ${a.isUnlocked? 'unlocked':'locked'}">
+                <div class="name">${a.name}</div>
+                <div class="desc">${a.desc}</div>
+                ${a.isUnlocked? '':'<div class="isLocked">Locked</div>'}                
+            </div>
+            `)
+            a.element = document.getElementById("achivement" + i)
+            i++;
         }
 
         this.ticker = setInterval(function() { this.doTick() }.bind(this), 1000);
@@ -246,6 +279,18 @@ export default class Game {
     doTick() {
         this.mone += this.monePerS;
         this.updateDisplay();
+        this.checkAchivements();
+    }
+
+    checkAchivements() {
+        for (var a of this.achivements) {
+            if (!a.isUnlocked && eval(a.eval)) {
+                a.isUnlocked = true
+                a.element.classList.remove('locked')
+                a.element.classList.add('unlocked')
+                a.element.getElementsByClassName('isLocked')[0].remove()
+            }
+        }
     }
 
     // Calcs total MpS, for performance reasons, don't think it's actually needed
