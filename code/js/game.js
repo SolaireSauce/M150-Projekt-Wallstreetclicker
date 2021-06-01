@@ -1,6 +1,7 @@
 import upgradesImport from './../content/upgrades.js';
 import achivementsImport from './../content/achivements.js';
 export default class Game {
+    currentVersion = "0.2"
     // Some important values
     mone = 0;
     monePerS = 0;
@@ -11,6 +12,7 @@ export default class Game {
     upgrades = upgradesImport;
     achivements = achivementsImport;
     // Main Timer
+    autoLoad = false;
     ticker;
     // HTML Elements
     mainClicker;
@@ -18,9 +20,10 @@ export default class Game {
     shopButtonDisplay;
     researchButtonDisplay;
     achivementsDisplay;
+    msgDisplay;
 
     
-    constructor (mainClicker, moneDisplay, mpSDisplay, shopButtonDisplay, researchButtonDisplay, achivementsDisplay) {
+    constructor (mainClicker, moneDisplay, mpSDisplay, shopButtonDisplay, researchButtonDisplay, achivementsDisplay, msgDisplay) {
         // Constructor doing constructor things
         this.moneDisplay = moneDisplay;
         this.shopButtonDisplay = shopButtonDisplay;
@@ -28,6 +31,7 @@ export default class Game {
         this.mpSDisplay = mpSDisplay;
         this.researchButtonDisplay = researchButtonDisplay;
         this.achivementsDisplay = achivementsDisplay;
+        this.msgDisplay = msgDisplay;
         
         // Adds upgrade buttons
         var i = 0;
@@ -61,13 +65,16 @@ export default class Game {
         //Doing some final things
         this.updateDisplay();
         //this.loadingScreen.classList.add('hidden');
+        if (JSON.parse(localStorage.getItem('savedGame')).autoLoad) {
+            this.loadGame()
+        }
     }
 
     // Function returns formatet number
     formatNumber(number){     
         number = parseFloat(number);
         if (number > 1e5) {
-            return number.toExponential(1).replace("+","");
+            return number.toExponential(1).replace("+","").replace("e","^");
         } else {
            return number;
         }
@@ -156,7 +163,6 @@ export default class Game {
         }
     }
 
-
     unlockUpgrade(args){
         if (args.create) {
             this.researchButtonDisplay.insertAdjacentHTML('beforeEnd', `
@@ -183,21 +189,48 @@ export default class Game {
         }
     }
 
-
     saveGame() {
-        var sg = {version: 0 ,mone: this.mone, monePerClick: this.monePerClick, upgrades: this.upgrades, achivements: this.achivements}
+        var sg = {version: this.currentVersion, autoLoad: this.autoLoad, mone: this.mone, monePerClick: this.monePerClick, upgrades: this.upgrades, achivements: this.achivements}
         localStorage.setItem('savedGame', JSON.stringify(sg))
+        this.buttonStatusDisplay(document.getElementsByClassName("saveButton")[0], "success")
     }
-
 
     loadGame() {
         var sg = JSON.parse(localStorage.getItem('savedGame'))
         clearInterval(this.ticker)
-        if (sg.version == 0) {
+        if (this.currentVersion != sg.version) {
+            this.displayNotification("Old Version: trying...", 3000)
+        }
+        if (sg.version == this.currentVersion) {
             this.mone = sg.mone
             this.monePerClick = sg.monePerClick
             this.upgrades = sg.upgrades
             this.achivements = sg.achivements
+            this.autoLoad = sg.autoLoad
+        } else {
+            this.mone = sg.mone
+            this.monePerClick = sg.monePerClick
+            for (var up of this.upgrades){
+                 for (var sUp of sg.upgrades){
+                    if (up.name == sUp.name) {
+                        up.amount = sUp.amount
+                        var cost = up.cost;
+                        for(var i = 0; i < up.amount; i++) {
+                            cost *= up.costIncrease
+                        }
+                        up.cost = cost
+                        up.unlocked = sUp.unlocked
+                    }
+                 }
+            } 
+            for (var ad of this.achivements){
+                for(var sAd of sg.achivements) {
+                    if (sAd.name == ad.name) {
+                        ad.unlocked = sAd.unlocked
+                    }
+                }
+            }
+            this.autoLoad = false
         }
 
         this.calcUpgradeMonePerS()
@@ -238,6 +271,12 @@ export default class Game {
             i++;
         }
 
+        if (this.mone == sg.mone && this.upgrades == sg.upgrades && this.monePerClick == sg.monePerClick) {
+            this.buttonStatusDisplay(document.getElementsByClassName("loadButton")[0], "success")            
+        } else {
+            this.buttonStatusDisplay(document.getElementsByClassName("loadButton")[0], "error") 
+        }
+
         this.ticker = setInterval(function() { this.doTick() }.bind(this), 1000);
 
         this.updateDisplay()
@@ -256,6 +295,13 @@ export default class Game {
                 button.classList.remove('buttonError');
             }, 100);
         }
+    }
+
+    displayNotification(msg, duration) {
+        this.msgDisplay.innerText = msg;
+        setTimeout(function () {
+            this.msgDisplay.innerText = ""
+        }.bind(this), duration)
     }
 
     // Updates HTML elements, 
@@ -289,6 +335,7 @@ export default class Game {
                 a.element.classList.remove('locked')
                 a.element.classList.add('unlocked')
                 a.element.getElementsByClassName('isLocked')[0].remove()
+                this.displayNotification(`unlocked achivement: \n ${a.name}`, 4000)
             }
         }
     }

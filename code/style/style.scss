@@ -91,12 +91,12 @@ body {
             }
 
             .saveButton {
-                width: min-content;
+                width: max-content;
                 grid-column: 3 / 3;
             }
 
             .loadButton {
-                width: min-content;
+                width: fit-content;
                 grid-column: 4 / 4;
             }
         }
@@ -207,6 +207,16 @@ body {
         &.shake {
             animation: shakeAni 500ms ease-in-out 1;
         }
+    }
+
+    .msgDisplay {
+        background: transparent;
+        position: absolute;
+        top: calc(#{$topBarHeight} + 50px);
+        text-align: center;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 1rem;
     }
 }
 

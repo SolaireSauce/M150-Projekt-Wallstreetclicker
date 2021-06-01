@@ -104,17 +104,17 @@ body .valueDisplayerParent .valueDisplayer .CurrentMonePerSecond {
 }
 
 body .valueDisplayerParent .valueDisplayer .saveButton {
-  width: -webkit-min-content;
-  width: -moz-min-content;
-  width: min-content;
+  width: -webkit-max-content;
+  width: -moz-max-content;
+  width: max-content;
   -ms-grid-column: 3;
   grid-column: 3 / 3;
 }
 
 body .valueDisplayerParent .valueDisplayer .loadButton {
-  width: -webkit-min-content;
-  width: -moz-min-content;
-  width: min-content;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
   -ms-grid-column: 4;
   grid-column: 4 / 4;
 }
@@ -231,6 +231,17 @@ body .mainClicker img {
 body .mainClicker.shake {
   -webkit-animation: shakeAni 500ms ease-in-out 1;
           animation: shakeAni 500ms ease-in-out 1;
+}
+
+body .msgDisplay {
+  background: transparent;
+  position: absolute;
+  top: calc(70px + 50px);
+  text-align: center;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+  font-size: 1rem;
 }
 
 @font-face {
