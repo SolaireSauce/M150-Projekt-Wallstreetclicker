@@ -23,8 +23,12 @@
             <div class="saveButton button" onclick="game.saveGame()">
                 <div class="name">Save</div>
             </div>
-            <div class="loadButton button" onclick="game.loadGame()">
-                <div class="name">Load</div>
+            <div class="loadButton" style="display: inline-flex;">
+                <div class="button" onclick="game.loadGame()">
+                    <div class="name">Load</div>
+                </div>
+                <p style="margin-left: 5px;">AutoLoad:</p>
+                <input id="autoLoadToggle" type="checkbox" onclick="game.toggleAutoLoad()">
             </div>
         </div>
     </div>

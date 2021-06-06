@@ -21,9 +21,10 @@ export default class Game {
     researchButtonDisplay;
     achivementsDisplay;
     msgDisplay;
+    autoloadDisplay;
 
     
-    constructor (mainClicker, moneDisplay, mpSDisplay, shopButtonDisplay, researchButtonDisplay, achivementsDisplay, msgDisplay) {
+    constructor (mainClicker, moneDisplay, mpSDisplay, shopButtonDisplay, researchButtonDisplay, achivementsDisplay, msgDisplay, autoloadDisplay) {
         // Constructor doing constructor things
         this.moneDisplay = moneDisplay;
         this.shopButtonDisplay = shopButtonDisplay;
@@ -32,6 +33,7 @@ export default class Game {
         this.researchButtonDisplay = researchButtonDisplay;
         this.achivementsDisplay = achivementsDisplay;
         this.msgDisplay = msgDisplay;
+        this.autoloadDisplay = autoloadDisplay;
         
         // Adds upgrade buttons
         var i = 0;
@@ -280,6 +282,7 @@ export default class Game {
         this.ticker = setInterval(function() { this.doTick() }.bind(this), 1000);
 
         this.updateDisplay()
+        this.autoloadDisplay.checked = this.autoLoad;
     }
 
     buttonStatusDisplay(button, status){
@@ -326,6 +329,13 @@ export default class Game {
         this.mone += this.monePerS;
         this.updateDisplay();
         this.checkAchivements();
+    }
+
+    toggleAutoLoad () {
+        this.autoLoad = !this.autoLoad;
+        var sg = JSON.parse(localStorage.getItem('savedGame'))
+        sg.autoLoad = this.autoLoad
+        localStorage.setItem('savedGame', JSON.stringify(sg))
     }
 
     checkAchivements() {

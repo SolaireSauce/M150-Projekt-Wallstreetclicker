@@ -8,7 +8,8 @@ function setup() {
         document.getElementById("shopButtonContainer"),
         document.getElementById("unlockButtonContainer"),
         document.getElementById("achivementsContainer"),
-        document.getElementsByClassName("msgDisplay")[0]
+        document.getElementsByClassName("msgDisplay")[0],
+        document.getElementById("autoLoadToggle"),
     );
 }
 
