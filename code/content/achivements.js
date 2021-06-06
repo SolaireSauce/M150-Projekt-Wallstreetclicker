@@ -35,6 +35,12 @@ export default [
         eval: "this.upgrades[0].amount >= 10",
     },
     {   
+        name: "There are Secret achivements?!",
+        desc: "Upgrade arduino auto clicker 100 times",
+        eval: "this.upgrades[1].amount >= 100",
+        secret: true
+    },
+    {   
         name: "Better mining",
         desc: "Research the GPU mining Farm",
         eval: "this.upgrades[3].unlocked",
@@ -65,6 +71,26 @@ export default [
         eval: "this.upgrades[9].unlocked",
     },
     {   
+        name: "Master researcher",
+        desc: "Research every upgrade",
+        eval: `
+        function tempF (g) {
+            var failed = false;
+            for (var u of g.upgrades) {
+                if (!u.unlocked) {
+                    failed = true;
+                    break;
+                }
+            }
+            if (failed) 
+                return false;
+            return true;            
+        }
+        tempF(this)
+        `,
+        secret: true
+    },
+    {   
         name: "Owner of the world",
         desc: "Claim the solar system",
         eval: "this.upgrades[10].amount > 0",
@@ -73,5 +99,16 @@ export default [
         name: "A bit beyond",
         desc: "spooky",
         eval: "this.upgrades[10].amount >= 10",
-    }
+    },
+    {   
+        name: "Cheater",
+        desc: "",
+        eval: "this.mone == Infinity",
+        secret: true
+    },{   
+        name: "Clicker hero",
+        desc: "Click more than 1000 times in one session",
+        eval: "this.sessionClicks >= 1000",
+        secret: true
+    },
 ]

@@ -1,11 +1,12 @@
 import upgradesImport from './../content/upgrades.js';
 import achivementsImport from './../content/achivements.js';
 export default class Game {
-    currentVersion = "1.01"
+    currentVersion = "1.02"
     // Some important values
     mone = 0;
     monePerS = 0;
     monePerClick = 1;
+    sessionClicks = 0;
     // Maybe will be needed
     recalculateUpgrades = false;
     // Content import
@@ -51,7 +52,7 @@ export default class Game {
         for(var a of this.achivements) {
             a.isUnlocked = false;
             this.achivementsDisplay.insertAdjacentHTML('beforeEnd', `
-            <div id="achivement${i}" class="achivement locked">
+            <div id="achivement${i}" class="${a.secret? "hidden" : ""} achivement locked">
                 <div class="name">${a.name}</div>
                 <div class="desc">${a.desc}</div>
                 <div class="isLocked">Locked</div>
@@ -204,7 +205,7 @@ export default class Game {
             this.displayNotification("Old Version: trying...", 3000)
         }
         if (sg.version == this.currentVersion) {
-            this.mone = sg.mone
+            this.mone = sg.mone == null ? 0 : sg.mone
             this.monePerClick = sg.monePerClick
             this.upgrades = sg.upgrades
             this.achivements = sg.achivements
@@ -263,7 +264,7 @@ export default class Game {
         
         for(var a of this.achivements) {
             this.achivementsDisplay.insertAdjacentHTML('beforeEnd', `
-            <div id="achivement${i}" class="achivement ${a.isUnlocked? 'unlocked':'locked'}">
+            <div id="achivement${i}" class="achivement ${a.secret && !a.unlocked? "hidden" : ""} ${a.isUnlocked? 'unlocked':'locked'}">
                 <div class="name">${a.name}</div>
                 <div class="desc">${a.desc}</div>
                 ${a.isUnlocked? '':'<div class="isLocked">Locked</div>'}                
@@ -315,6 +316,7 @@ export default class Game {
 
     // Funtion for big button in the middle of the screen
     clickedClicker() {
+        this.sessionClicks++;
         this.mone += this.monePerClick;
         this.updateDisplay();
         this.mainClicker.classList.add('shake');      
@@ -342,6 +344,9 @@ export default class Game {
         for (var a of this.achivements) {
             if (!a.isUnlocked && eval(a.eval)) {
                 a.isUnlocked = true
+                if (a.secret? true : false) {
+                    a.element.classList.remove('hidden')
+                }
                 a.element.classList.remove('locked')
                 a.element.classList.add('unlocked')
                 a.element.getElementsByClassName('isLocked')[0].remove()
