@@ -51,12 +51,12 @@ export default [
     },    
     {   
         name: "MORE MONE",
-        desc: "Get 1^6 mone",
+        desc: "Get 1e6 mone",
         eval: "this.mone >= 1e6",
     },
     {   
         name: "It's enough already",
-        desc: "Get 1^6 mone per Second",
+        desc: "Get 1e6 mone per Second",
         eval: "this.monePerS >= 1e6",
     },
     {   

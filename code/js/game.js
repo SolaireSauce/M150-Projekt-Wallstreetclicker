@@ -1,7 +1,7 @@
 import upgradesImport from './../content/upgrades.js';
 import achivementsImport from './../content/achivements.js';
 export default class Game {
-    currentVersion = "1.0"
+    currentVersion = "1.01"
     // Some important values
     mone = 0;
     monePerS = 0;
@@ -76,7 +76,7 @@ export default class Game {
     formatNumber(number){     
         number = parseFloat(number);
         if (number > 1e5) {
-            return number.toExponential(1).replace("+","").replace("e","^");
+            return number.toExponential(1).replace("+","");
         } else {
            return number;
         }

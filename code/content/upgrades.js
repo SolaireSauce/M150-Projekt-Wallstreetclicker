@@ -90,7 +90,7 @@ export default [
         unlocked: false,
         amount: 0,
         monePerS: 5e6,
-        cost: 1000,
+        cost: 1e7,
         costIncrease: 1.2,
         unlockCost: 25000000,
         upgradeFunc: "defaultUpgrade",
