@@ -1,7 +1,7 @@
 import upgradesImport from './../content/upgrades.js';
 import achivementsImport from './../content/achivements.js';
 export default class Game {
-    currentVersion = "0.2"
+    currentVersion = "1.0"
     // Some important values
     mone = 0;
     monePerS = 0;
@@ -171,7 +171,7 @@ export default class Game {
             <div class="button" onclick="game.unlockUpgrade({id: ${args.id}, thrower: this})">
                 <div class="value">UNLOCK</div>            
                 <div class="name">${args.u.name}</div>
-                <div class="value">${args.u.unlockCost} mone</div>    
+                <div class="value">${this.formatNumber(args.u.unlockCost)} mone</div>    
             </div>`);
             return;
         }
